@@ -3,92 +3,67 @@ using System.Drawing;
 using System.IO;
 public class Program
 {
-    static void ProsledjivanjeListe(string lista, double kontrast, double osvetljenje, bool prvoKontrast, bool overwrite)
+      static void ProsledjivanjeListe(string lista, double kontrast, double osvetljenje, bool prvoKontrast, bool overwrite)
     {
-        StreamReader tekst = new StreamReader(lista);
-        if (prvoKontrast && overwrite)
+        if (File.Exists(lista))
         {
+            StreamReader tekst = new StreamReader(lista);
             while (!tekst.EndOfStream)
             {
                 string ime = tekst.ReadLine();
-                Bitmap slika = new Bitmap(tekst.ReadLine());
-                Kontrast(ref slika, kontrast);
-                Osvetljenje(ref slika, osvetljenje);
-                slika.Save(ime);
+                JednaSlika(ime, kontrast, osvetljenje, prvoKontrast, overwrite);
             }
         }
-        else if (prvoKontrast && !overwrite)
+        else
         {
-            while (!tekst.EndOfStream)
-            {
-                string ime = tekst.ReadLine();
-                File.Copy(lista, $"{ime}(izmenjeno)");
-                Bitmap slika = new Bitmap($"{ime}(izmenjeno)");
-                Kontrast(ref slika, kontrast);
-                Osvetljenje(ref slika, osvetljenje);
-                slika.Save($"{ime}(izmenjeno)");
-            }
-        }
-        else if (!prvoKontrast && overwrite)
-        {
-            while (!tekst.EndOfStream)
-            {
-                string ime = tekst.ReadLine();
-                Bitmap slika = new Bitmap(ime);
-                Osvetljenje(ref slika, osvetljenje);
-                Kontrast(ref slika, kontrast);
-                slika.Save(ime);
-            }
-        }
-        else if (!(prvoKontrast && overwrite))
-        {
-            while (!tekst.EndOfStream)
-            {
-                string ime = tekst.ReadLine();
-                File.Copy(lista, $"{ime}(izmenjeno)");
-                Bitmap slika = new Bitmap($"{ime}(izmenjeno)");
-                Osvetljenje(ref slika, osvetljenje);
-                Kontrast(ref slika, kontrast);
-                slika.Save($"{ime}(izmenjeno)");
-            }
+            Console.Error.WriteLine("Ne postoji datoteka sa nazivom " + lista);
+            return;
         }
     }
     static void JednaSlika(string imeSlike, double kontrast, double osvetljenje, bool prvoKontrast, bool overwrite)
     {
-        if (prvoKontrast && overwrite)
+        if (File.Exists(imeSlike))
         {
+            if (prvoKontrast && overwrite)
+            {
 
-            Bitmap slika = new Bitmap(imeSlike);
-            Kontrast(ref slika, kontrast);
-            Osvetljenje(ref slika, osvetljenje);
-            slika.Save($"{imeSlike}(izmenjeno)");
+                Bitmap slika = new Bitmap(imeSlike);
+                Kontrast(ref slika, kontrast);
+                Osvetljenje(ref slika, osvetljenje);
+                slika.Save($"{imeSlike}(izmenjeno)");
 
+            }
+            else if (prvoKontrast && !overwrite)
+            {
+                File.Copy(imeSlike, $"{imeSlike}(izmenjeno)");
+                Bitmap slika = new Bitmap($"{imeSlike}(izmenjeno)");
+                Kontrast(ref slika, kontrast);
+                Osvetljenje(ref slika, osvetljenje);
+                slika.Save(imeSlike);
+
+            }
+            else if (!prvoKontrast && overwrite)
+            {
+
+                Bitmap slika = new Bitmap(imeSlike);
+                Osvetljenje(ref slika, osvetljenje);
+                Kontrast(ref slika, kontrast);
+                slika.Save(imeSlike);
+            }
+            else if (!(prvoKontrast && overwrite))
+            {
+
+                File.Copy(imeSlike, $"{imeSlike}(izmenjeno)");
+                Bitmap slika = new Bitmap($"{imeSlike}(izmenjeno)");
+                Osvetljenje(ref slika, osvetljenje);
+                Kontrast(ref slika, kontrast);
+                slika.Save($"{imeSlike}(izmenjeno)");
+            }
         }
-        else if (prvoKontrast && !overwrite)
+        else
         {
-            File.Copy(imeSlike, $"{imeSlike}(izmenjeno)");
-            Bitmap slika = new Bitmap($"{imeSlike}(izmenjeno)");
-            Kontrast(ref slika, kontrast);
-            Osvetljenje(ref slika, osvetljenje);
-            slika.Save(imeSlike);
-
-        }
-        else if (!prvoKontrast && overwrite)
-        {
-
-            Bitmap slika = new Bitmap(imeSlike);
-            Osvetljenje(ref slika, osvetljenje);
-            Kontrast(ref slika, kontrast);
-            slika.Save(imeSlike);
-        }
-        else if (!(prvoKontrast && overwrite))
-        {
-
-            File.Copy(imeSlike, $"{imeSlike}(izmenjeno)");
-            Bitmap slika = new Bitmap($"{imeSlike}(izmenjeno)");
-            Osvetljenje(ref slika, osvetljenje);
-            Kontrast(ref slika, kontrast);
-            slika.Save($"{imeSlike}(izmenjeno)");
+            Console.Error.WriteLine("Ne postoji datoteka sa nazivom " + imeSlike);
+            return;
         }
     }
     static void Osvetljenje(ref Bitmap slika, double procenat)
@@ -145,8 +120,7 @@ public class Program
         else if (args[0].StartsWith("o") || args[0].StartsWith("O"))
         {
             prvoKontrast = false;
-            if (!(double.TryParse(args[0].Substring(1), out osvetljenje))
-                && osvetljenje < -100 && osvetljenje > 100)
+            if (!(double.TryParse(args[0].Substring(1), out osvetljenje)) && osvetljenje < -100 && osvetljenje > 100)
             {
                 Console.Error.WriteLine("Osvetljenje lose upisano/izvan opsega");
                 return;
@@ -174,7 +148,7 @@ public class Program
                 }
             }
         }
-        else if (args[1].StartsWith("k") || args[1].StartsWith("K"))
+        else if (args[1].StartsWith("o") || args[1].StartsWith("O"))
         {
             if (!prvoKontrast)
             {
@@ -219,12 +193,19 @@ public class Program
                     if (overwrite == 0) replace = false;
                     else replace = true;
                     JednaSlika(args[i], kontrast, osvetljenje, prvoKontrast, replace);
+                    
                 }
+                return;
             }
             else if (pojedinacnaSlika == 0)
             {
 
+                bool replace;
+                if (overwrite == 0) replace = false;
+                else replace = true;
+                ProsledjivanjeListe(args[3], kontrast, osvetljenje, prvoKontrast, replace);
             }
+            return;
         }
         else
         {
@@ -244,6 +225,7 @@ public class Program
                     else replace = true;
                     JednaSlika(args[i], kontrast, osvetljenje, prvoKontrast, replace);
                 }
+                return;
             }
             else if (pojedinacnaSlika == 0)
             {
@@ -251,8 +233,9 @@ public class Program
                     bool replace;
                     if (overwrite == 0) replace = false;
                     else replace = true;
-                    ProsledjivanjeListe(args[4], kontrast, osvetljenje, prvoKontrast, replace);
+                    ProsledjivanjeListe(args[4], kontrast, osvetljenje, prvoKontrast, replace);    
                 }
+                return;
             }
             else if ((args[3] == "C" || args[3] == "c" || args[3] == "R" || args[3] == "r") && overwrite != 2)
             {
@@ -260,8 +243,11 @@ public class Program
                 return;
             }
 
-
-
+        }
+        else
+        {
+            Console.Error.WriteLine("Nepoznata komanda na cetvrtom mestu poziva");
+            return;
         }
     }
 }
