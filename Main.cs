@@ -68,7 +68,25 @@ public class Program
     }
     static void Osvetljenje(ref Bitmap slika, double procenat)
     {
-
+    double osvetljenje = (procenat * 255) / 100;
+    for (int i = 0; i < slika.Height; i++)
+        {
+            for (int j = 0; j < slika.Width; j++)
+            {
+              Color pixel = slika.GetPixel(j, i);
+                int red = Convert.ToInt32(Math.Truncate(pixel.R + osvetljenje));
+                int green = Convert.ToInt32(Math.Truncate(pixel.G + osvetljenje));
+                int blue = Convert.ToInt32(Math.Truncate(pixel.B + osvetljenje));
+                if (red > 255) red = 255;
+                if (green > 255) green = 255;
+                if (blue > 255) blue = 255;
+                if (red < 0) red = 0;
+                if (green < 0) green = 0;
+                if (blue < 0) blue = 0;
+                Color novo = Color.FromArgb(red, green, blue);
+                slika.SetPixel(j, i, novo);
+            }
+        }
     }
 
     static void Kontrast(ref Bitmap slika, double procenat)
