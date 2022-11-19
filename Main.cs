@@ -23,7 +23,7 @@ public class Program
     static void JednaSlika(string imeSlike, double kontrast, double osvetljenje, bool prvoKontrast, bool overwrite)
     {
         if (File.Exists(imeSlike))
-        {
+        { 
             if (prvoKontrast && overwrite)
             {
 
@@ -74,9 +74,9 @@ public class Program
             for (int j = 0; j < slika.Width; j++)
             {
               Color pixel = slika.GetPixel(j, i);
-                int red = Convert.ToInt32(Math.Truncate(pixel.R + osvetljenje));
-                int green = Convert.ToInt32(Math.Truncate(pixel.G + osvetljenje));
-                int blue = Convert.ToInt32(Math.Truncate(pixel.B + osvetljenje));
+                int red = Convert.ToInt32(pixel.R + osvetljenje);
+                int green = Convert.ToInt32(pixel.G + osvetljenje);
+                int blue = Convert.ToInt32(pixel.B + osvetljenje);
                 if (red > 255) red = 255;
                 if (green > 255) green = 255;
                 if (blue > 255) blue = 255;
@@ -99,9 +99,9 @@ public class Program
             for (int j = 0; j < slika.Width; j++)
             {
                 Color pixel = slika.GetPixel(j, i);
-                int red = Convert.ToInt32(Math.Truncate(factor * (pixel.R - 128) + 128));
-                int green = Convert.ToInt32(Math.Truncate(factor * (pixel.G - 128) + 128));
-                int blue = Convert.ToInt32(Math.Truncate(factor * (pixel.B - 128) + 128));
+                int red = Convert.ToInt32(factor * (pixel.R - 128) + 128);
+                int green = Convert.ToInt32(factor * (pixel.G - 128) + 128);
+                int blue = Convert.ToInt32(factor * (pixel.B - 128) + 128);
                 if (red > 255) red = 255;
                 if (green > 255) green = 255;
                 if (blue > 255) blue = 255;
