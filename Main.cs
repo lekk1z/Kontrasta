@@ -3,7 +3,7 @@ using System.Drawing;
 using System.IO;
 public class Program
 {
-      static void ProsledjivanjeListe(string lista, double kontrast, double osvetljenje, bool prvoKontrast, bool overwrite)
+    static void ProsledjivanjeListe(string lista, double kontrast, double osvetljenje, bool prvoKontrast, bool overwrite)
     {
         if (File.Exists(lista))
         {
@@ -12,6 +12,7 @@ public class Program
             {
                 string ime = tekst.ReadLine();
                 JednaSlika(ime, kontrast, osvetljenje, prvoKontrast, overwrite);
+                Console.WriteLine("Slika {0} obradjena", ime);
             }
         }
         else
@@ -23,28 +24,28 @@ public class Program
     static void JednaSlika(string imeSlike, double kontrast, double osvetljenje, bool prvoKontrast, bool overwrite)
     {
         if (File.Exists(imeSlike))
-        { 
+        {
+            string imeFajla = Path.GetFileNameWithoutExtension(imeSlike);
+            string ekstenzija = Path.GetExtension(imeSlike);
             if (prvoKontrast && overwrite)
             {
 
                 Bitmap slika = new Bitmap(imeSlike);
                 Kontrast(ref slika, kontrast);
                 Osvetljenje(ref slika, osvetljenje);
-                slika.Save($"{imeSlike}(izmenjeno)");
+                slika.Save(imeSlike);
 
             }
             else if (prvoKontrast && !overwrite)
             {
-                File.Copy(imeSlike, $"{imeSlike}(izmenjeno)");
-                Bitmap slika = new Bitmap($"{imeSlike}(izmenjeno)");
+                Bitmap slika = new Bitmap(imeSlike);
                 Kontrast(ref slika, kontrast);
                 Osvetljenje(ref slika, osvetljenje);
-                slika.Save(imeSlike);
+                slika.Save($"{imeFajla}(izmenjeno){ekstenzija}");
 
             }
             else if (!prvoKontrast && overwrite)
             {
-
                 Bitmap slika = new Bitmap(imeSlike);
                 Osvetljenje(ref slika, osvetljenje);
                 Kontrast(ref slika, kontrast);
@@ -52,13 +53,13 @@ public class Program
             }
             else if (!(prvoKontrast && overwrite))
             {
-
-                File.Copy(imeSlike, $"{imeSlike}(izmenjeno)");
-                Bitmap slika = new Bitmap($"{imeSlike}(izmenjeno)");
+                Bitmap slika = new Bitmap(imeSlike);
+                
                 Osvetljenje(ref slika, osvetljenje);
                 Kontrast(ref slika, kontrast);
-                slika.Save($"{imeSlike}(izmenjeno)");
+                slika.Save($"{imeFajla}(izmenjeno){ekstenzija}");
             }
+            
         }
         else
         {
@@ -68,12 +69,12 @@ public class Program
     }
     static void Osvetljenje(ref Bitmap slika, double procenat)
     {
-    double osvetljenje = (procenat * 255) / 100;
-    for (int i = 0; i < slika.Height; i++)
+        double osvetljenje = (procenat * 255) / 100;
+        for (int i = 0; i < slika.Height; i++)
         {
             for (int j = 0; j < slika.Width; j++)
             {
-              Color pixel = slika.GetPixel(j, i);
+                Color pixel = slika.GetPixel(j, i);
                 int red = Convert.ToInt32(pixel.R + osvetljenje);
                 int green = Convert.ToInt32(pixel.G + osvetljenje);
                 int blue = Convert.ToInt32(pixel.B + osvetljenje);
@@ -113,18 +114,20 @@ public class Program
             }
         }
 
-
     }
 
     public static void Main(string[] args)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
+        if (args.Length < 4)
+        {
+            Console.Error.WriteLine("Niste prosledili sve potrebne argumente.");
+            return;
+        }
         double osvetljenje = 0;
         double kontrast = 0;
         bool prvoKontrast;
         int overwrite = 2;
         int pojedinacnaSlika = 2;
-
         if (args[0].StartsWith("k") || args[0].StartsWith("K"))
         {
             prvoKontrast = true;
@@ -211,7 +214,7 @@ public class Program
                     if (overwrite == 0) replace = false;
                     else replace = true;
                     JednaSlika(args[i], kontrast, osvetljenje, prvoKontrast, replace);
-                    
+
                 }
                 return;
             }
@@ -232,6 +235,11 @@ public class Program
         }
         if ((args[3] == "C" || args[3] == "c" || args[3] == "R" || args[3] == "r") && overwrite == 2)
         {
+            if (args.Length < 5)
+            {
+                Console.Error.WriteLine("Niste prosledili sve potrebne argumente.");
+                return;
+            }
             if (args[3] == "C" || args[3] == "c") overwrite = 0;
             else overwrite = 1;
             if (pojedinacnaSlika == 1)
@@ -251,7 +259,7 @@ public class Program
                     bool replace;
                     if (overwrite == 0) replace = false;
                     else replace = true;
-                    ProsledjivanjeListe(args[4], kontrast, osvetljenje, prvoKontrast, replace);    
+                    ProsledjivanjeListe(args[4], kontrast, osvetljenje, prvoKontrast, replace);
                 }
                 return;
             }
