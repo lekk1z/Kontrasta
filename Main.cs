@@ -12,7 +12,7 @@ public class Program
             {
                 string ime = tekst.ReadLine();
                 JednaSlika(ime, kontrast, osvetljenje, prvoKontrast, overwrite);
-                Console.WriteLine("Slika {0} obradjena", ime);
+                Console.WriteLine("Slika {0} izmenjena", ime);
             }
         }
         else
@@ -41,7 +41,7 @@ public class Program
                 Bitmap slika = new Bitmap(imeSlike);
                 Kontrast(ref slika, kontrast);
                 Osvetljenje(ref slika, osvetljenje);
-                slika.Save($"{imeFajla}(izmenjeno){ekstenzija}");
+                slika.Save($"{imeFajla}-izmenjeno{ekstenzija}");
 
             }
             else if (!prvoKontrast && overwrite)
@@ -57,7 +57,7 @@ public class Program
                 
                 Osvetljenje(ref slika, osvetljenje);
                 Kontrast(ref slika, kontrast);
-                slika.Save($"{imeFajla}(izmenjeno){ekstenzija}");
+                slika.Save($"{imeFajla}-izmenjeno{ekstenzija}");
             }
             
         }
@@ -200,7 +200,7 @@ public class Program
         }
         else if ((args[2] == "s" || args[2] == "S" || args[2] == "t" || args[2] == "T") && pojedinacnaSlika != 2)
         {
-            Console.Error.WriteLine("Greska dva puta unesen parametar za izvor slike");
+            Console.Error.WriteLine("Greska! Dva puta unesen parametar za izvor slike");
         }
         else if (args[2] == "C" || args[2] == "c" || args[2] == "R" || args[2] == "r")
         {
@@ -230,7 +230,7 @@ public class Program
         }
         else
         {
-            Console.Error.WriteLine("Nepoynata komanda na trecem polju poziva");
+            Console.Error.WriteLine("Nepoznata komanda na trecem polju poziva");
             return;
         }
         if ((args[3] == "C" || args[3] == "c" || args[3] == "R" || args[3] == "r") && overwrite == 2)
